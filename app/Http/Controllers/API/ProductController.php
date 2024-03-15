@@ -19,12 +19,9 @@ class ProductController extends BaseController
      */
     public function index()
     {
-        // dd(Auth::user());
         $products = Product::with('user')->get();
         $title="All Products";
         return view('showproducts',compact('products','title'));
-        // return response()->json(['data'=>$products]);
-        // return $this->sendResponse(ProductResource::collection($products), 'Products retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
@@ -63,7 +60,6 @@ class ProductController extends BaseController
         $product = Product::create($productData);
 
         return redirect()->route('products.index');
-        // return $this->sendResponse(new ProductResource($product), 'Product created successfully.');
     }
 
     /**
@@ -79,13 +75,11 @@ class ProductController extends BaseController
             return $this->sendError('Product not found.');
         }
         return view('showProduct',compact('product'));
-        // return $this->sendResponse(new ProductResource($product), 'Product retrieved successfully.');
     }
 
     public function edit($id)
     {
         $product = Product::find($id);
-        // dd($product->user_id,Auth::user()->id);
         if($product->user_id!=Auth::user()->id)
         {
             $right='edit';
@@ -94,8 +88,9 @@ class ProductController extends BaseController
         if (is_null($product)) {
             return $this->sendError('Product not found.');
         }
-        return view('editProduct',compact('product'));
-        // return $this->sendResponse(new ProductResource($product), 'Product retrieved successfully.');
+        $categories=['Stationary', 'Clothing', 'Electronics', 'Accessories', 'Home appliances'];
+        $display=["Yes", "No"];
+        return view('editProduct',compact('product','categories'));
     }
     /**
      * Update the specified resource in storage.
@@ -113,29 +108,32 @@ class ProductController extends BaseController
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'product_name' => 'required',
+            'product_description' => 'required'
         ]);
-
+        
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $product->name = $input['name'];
-        $product->detail = $input['detail'];
+        
+        $product['name']=$input['product_name'];
+        $product['detail']=$input['product_description'];
+        $product['category']=$input['product_category'];
+        $product['quantity']=$input['available_quantity'];
+        $product['display']=$input['enable_display'];
+        $product['price']=$input['product_price'];
+        $product['productimage']=$input['product_img'];
         $product->save();
 
         return redirect()->route('products.show',$product->id);
-        // return $this->sendResponse(new ProductResource($product), 'Product updated successfully.');
     }
 
 
     public function getAllMyProducts(){
         if(Auth::user()){
-            // dd(Auth::user()->id);
             $products=[];
             $products = Product::where('user_id',Auth::user()->id)->get();
-            // dd($products);
             $title="My products";
             return view('showproducts',compact('products','title'));
         }
@@ -143,19 +141,6 @@ class ProductController extends BaseController
         return view('notAuthorized',compact('right'));
     }
 
-    // public function recentProducts(){
-    //     if(Auth::user()){
-    //         // dd(Auth::user()->id);
-    //         $products=[];
-    //         $products = Product::where('user_id',Auth::user()->id)->get();
-            
-    //         $collection=collect($products);
-    //         $sortedProducts=$collection->sortBy('created_at');
-    //         $sortedProducts->values->all();
-
-    //         return 
-    //     }
-    // }
     /**
      * Remove the specified resource from storage.
      *
@@ -175,7 +160,12 @@ class ProductController extends BaseController
 
     
     public function deletedProducts(Request $request){
-        $products=Product::onlyTrashed()->get();
+        $products=Product::onlyTrashed()->where('user_id',Auth::user()->id)->get();
+        if(count($products)<=0)
+        {
+            $object='deleted products';
+            return view('empty',compact('object'));
+        }
         return view('showdeleted',compact('products'));
     }
     public function restoreProduct($id)
@@ -192,21 +182,19 @@ class ProductController extends BaseController
 
     public function deleteProductForever($id)
     {
-        // If you have not deleted before
-        $product = Product::find($id);
-        if($product->user_id!=Auth::user()->id)
-        {
-            $right='edit';
-            return view('notAuthorized',compact('right'));
-        }
+       // If you have not deleted before
+       $product = Product::withTrashed()->find($id);
+       if($product->user_id!=Auth::user()->id)
+       {
+           $right='delete';
+           return view('notAuthorized',compact('right'));
+       }
 
-        // If you have soft-deleted it before
-        $product = Product::withTrashed()->find($id);
+       // If you have soft-deleted it before
+       $product = Product::withTrashed()->find($id);
 
-        $product->forceDelete(); // This permanently deletes the post for ever!
-
-        return response()->json(["success"=>true]);
-        // return redirect()->route('deleted');
+       $product->forceDelete(); // This permanently deletes the post for ever!
+       return response()->json(["success"=>true]);
     }
 
 }

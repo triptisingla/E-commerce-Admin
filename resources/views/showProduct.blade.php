@@ -9,7 +9,6 @@
 <div class="container">
 
 
-<!-- <a href="{{url('productcreate')}}"><button  type="button" class="btn btn-primary">CREATE</button></a> -->
     <div class="card mb-3 w-50 m-auto border border-4">
     <img src="{{$product->productimage}}" class="card-img-top" alt="{{$product->name}}">
     <div class="card-body">

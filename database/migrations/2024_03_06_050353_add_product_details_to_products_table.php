@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->enum('display', ["Yes", "No"])->nullable();
             $table->string('productimage')->nullable();
             $table->integer('price')->nullable();
+            $table->string('product_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
         });

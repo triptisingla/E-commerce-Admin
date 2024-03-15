@@ -87,16 +87,10 @@
 <div class="form-group mt-3">
   <label class="col-md-4 control-label" for="filebutton">main_image</label>
   <div class="col-md-4">
-  <!-- <input id="product_price" name="product_price" placeholder="Product price" class="form-control input-md" required="" type="text"> -->
   <input class="form-control input-md" required="" type="text"  id="product_img" name="product_img">
 </div>
 </div>
-<!-- <div class="form-group mt-3">
-  <label class="col-md-4 control-label" for="filebutton">main_image</label>
-  <div class="col-md-4">
-    <input id="filebutton" name="filebutton" class="input-file" type="file">
-  </div>
-</div> -->
+
 
 
 <!-- Button -->

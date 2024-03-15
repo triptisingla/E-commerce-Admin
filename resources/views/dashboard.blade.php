@@ -14,8 +14,7 @@
                 <img src="{{$user->profilepic}}"
                   alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
                   style="width: 150px; z-index: 1">
-                <!-- <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                  style="z-index: 1;"> -->
+               
                   <a type="button" href="{{url('updateprofile')}}" class="btn btn-primary mb-3"
                   style="z-index: 2;">
                   Edit profile

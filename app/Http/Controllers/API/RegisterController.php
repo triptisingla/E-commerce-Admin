@@ -39,7 +39,7 @@ class RegisterController extends BaseController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $success['token'] = $user->createToken('MyApp')->accessToken;
+        $success['token'] = $user->createToken('token')->accessToken;
         $success['name'] = $user->name;
         return view('login');
         // return $this->sendResponse($success, 'User register successfully.');
@@ -84,20 +84,17 @@ class RegisterController extends BaseController
     {
         if (Auth::user()) {
             $user = User::find(Auth::user()->id);
-            // $user=auth()->user();
-            // dd($user);
+
             return view('updateprofile', compact('user'));
         }
         return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
-        // dd(auth()->user());
-        // return "hii";  
+
     }
 
 
     public function updateprofile(Request $request)
     {
-        // return "hii";
-        // dd($request->user()->token());
+
         if (Auth::user()) {
             $userDetails['name'] = $request['name'];
             $userDetails['email'] = $request['email'];
@@ -110,8 +107,8 @@ class RegisterController extends BaseController
             // dd($userDetails);
 
             $userUpdated = User::where('id', Auth::user()->id)->update($userDetails);
-
-            return $this->sendResponse($userUpdated, 'User updated successfully.');
+            return redirect()->route('dashboard');
+            // return $this->sendResponse($userUpdated, 'User updated successfully.');
         }
     }
 

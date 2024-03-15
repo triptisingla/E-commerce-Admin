@@ -45,7 +45,6 @@ Route::get('/login', function () {
 
 
 
-// Route::get('/updateprofile', [RegisterController::class, 'updateprofile'])->middleware('auth');
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login', [RegisterController::class, 'login'])->name('login');
@@ -60,9 +59,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard',function(){
         $user = Auth::user();
 
-
-
-         //get recent Products
          $products=[];
          $products = Product::where('user_id',Auth::user()->id)->get();
          
@@ -71,9 +67,6 @@ Route::middleware('auth')->group(function () {
          $sortedProducts=$collection->sortBy('created_at');
          $sortedProducts=$sortedProducts->take(4);
          $sortedProducts->values()->all();
-        //  dd($sortedProducts);
-
-
 
         return view('dashboard',compact('user','sortedProducts'));
     })->name('dashboard');
@@ -93,9 +86,7 @@ Route::middleware('auth')->group(function () {
         $display=["Yes", "No"];
         return view('productcreate',compact('categories','display'));
     });
-    // Route::get('/showproducts',function(){
-    //     return view('showProducts');
-    // });
+
 
 });
 
